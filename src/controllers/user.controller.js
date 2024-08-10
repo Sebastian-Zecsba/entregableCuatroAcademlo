@@ -1,10 +1,11 @@
 const catchError = require('../utils/catchError');
 const User = require('../models/User');
 const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const Post = require('../models/Post');
 
 const getAll = catchError(async(req, res) => {
-    const results = await User.findAll();
+    const results = await User.findAll({include: [Post]});
     return res.json(results);
 });
 
@@ -67,6 +68,19 @@ const logged = catchError(async(req, res) => {
     return res.json(user)
 })
 
+const setPost = catchError(async(req, res) => {
+    const { id } = req.params;
+
+    const users = await User.findByPk(id)
+    if(!users) return res.json('Usuario no encontrado')
+
+    await users.setPosts(req.body)
+
+    const post = await users.getPosts()
+
+    return res.json(post)
+})
+
 module.exports = {
     getAll,
     create,
@@ -74,5 +88,6 @@ module.exports = {
     remove,
     update,
     login,
-    logged
+    logged,
+    setPost
 }
