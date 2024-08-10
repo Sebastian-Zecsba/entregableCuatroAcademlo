@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const Post = require('../models/Post');
 
 const getAll = catchError(async(req, res) => {
-    const results = await User.findAll({include: [Post]});
+    const results = await User.findAll({include: [{model: Post, through:{attributes: ['userId']}}]});
     return res.json(results);
 });
 
@@ -74,11 +74,26 @@ const setPost = catchError(async(req, res) => {
     const users = await User.findByPk(id)
     if(!users) return res.json('Usuario no encontrado')
 
-    await users.setPosts(req.body)
+    const postIds = req.body.postIds; // Asegúrate de enviar un array de IDs en el cuerpo
+
+    // Verificar que los posts existen en la base de datos
+    const posts = await Post.findAll({
+        where: {
+            id: postIds
+        }
+    });
+
+    if (posts.length !== postIds.length) {
+        return res.status(404).json({ message: 'Uno o más posts no encontrados' });
+    }
+
+    // Establecer la relación en la tabla intermedia 'favorites'
+    await users.setPosts(postIds);
 
     const post = await users.getPosts()
 
-    return res.json(post)
+    console.log(postIds)
+    return res.json({ message: 'Relación hecha', posts: post })
 })
 
 module.exports = {
