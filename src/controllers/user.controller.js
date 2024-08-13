@@ -5,15 +5,7 @@ const jwt = require('jsonwebtoken');
 const Post = require('../models/Post');
 
 const getAll = catchError(async(req, res) => {
-    const results = await User.findAll({
-        include: [{
-            model: Post,
-            as: 'FavoritePosts',
-            through: {
-                attributes: []
-            }
-        }, Post
-    ]});
+    const results = await User.findAll({include: [Post, Favorite]});
     return res.json(results);
 });
 
@@ -78,21 +70,21 @@ const logged = catchError(async(req, res) => {
 
 //? /users/:id/posts
 
-const setPost = catchError(async (req, res) => {
-    //! 1 - Identificar el id
-    const { id } = req.params;
-    const user = await User.findByPk(id)
-    if(!user) return res.json('No existe este usuario')
+// const setPost = catchError(async (req, res) => {
+//     //! 1 - Identificar el id
+//     const { id } = req.params;
+//     const user = await User.findByPk(id)
+//     if(!user) return res.json('No existe este usuario')
 
-    //! 2 - Seteo los posts a Usuarios
-    await user.setFavoritePosts(req.body)
+//     //! 2 - Seteo los posts a Usuarios
+//     await user.setFavoritePosts(req.body)
 
-    //! 3 - Obtener lo que se setea, con el objetivo de dar vista
-    const posts = await user.getPosts()
+//     //! 3 - Obtener lo que se setea, con el objetivo de dar vista
+//     const posts = await user.getPosts()
 
-    //! 4 - Final retorno
-    return res.json(posts)
-});
+//     //! 4 - Final retorno
+//     return res.json(posts)
+// });
 
 
 module.exports = {
@@ -102,6 +94,5 @@ module.exports = {
     remove,
     update,
     login,
-    logged,
-    setPost
+    logged
 }
