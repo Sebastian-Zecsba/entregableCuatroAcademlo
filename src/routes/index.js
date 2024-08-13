@@ -1,6 +1,6 @@
 const express = require('express');
-const routerUser = require('./user.route');
-const routerPost = require('./post.route');
+const routerUser = require('./user.router');
+const routerPost = require('./post.router');
 const { verifyJwt } = require('../utils/verify');
 const router = express.Router();
 

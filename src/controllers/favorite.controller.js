@@ -1,6 +1,7 @@
 const catchError = require('../utils/catchError');
 const Favorite = require('../models/Favorite');
 const Post = require('../models/Post');
+
 const createFavorite = catchError(async(req, res) => {
   const { id } = req.params
   const { id: userId } = req.user

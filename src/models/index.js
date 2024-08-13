@@ -1,3 +1,4 @@
+const Favorite = require("./Favorite");
 const Post = require("./Post");
 const User = require("./User");
 
