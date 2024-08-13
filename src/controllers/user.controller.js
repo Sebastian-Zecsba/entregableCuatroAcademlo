@@ -5,7 +5,15 @@ const jwt = require('jsonwebtoken');
 const Post = require('../models/Post');
 
 const getAll = catchError(async(req, res) => {
-    const results = await User.findAll({include: [{model: Post, through:{attributes: ['userId']}}]});
+    const results = await User.findAll({
+        include: [{
+            model: Post,
+            as: 'FavoritePosts',
+            through: {
+                attributes: []
+            }
+        }, Post
+    ]});
     return res.json(results);
 });
 
@@ -68,33 +76,24 @@ const logged = catchError(async(req, res) => {
     return res.json(user)
 })
 
-const setPost = catchError(async(req, res) => {
+//? /users/:id/posts
+
+const setPost = catchError(async (req, res) => {
+    //! 1 - Identificar el id
     const { id } = req.params;
+    const user = await User.findByPk(id)
+    if(!user) return res.json('No existe este usuario')
 
-    const users = await User.findByPk(id)
-    if(!users) return res.json('Usuario no encontrado')
+    //! 2 - Seteo los posts a Usuarios
+    await user.setFavoritePosts(req.body)
 
-    const postIds = req.body.postIds; // Asegúrate de enviar un array de IDs en el cuerpo
+    //! 3 - Obtener lo que se setea, con el objetivo de dar vista
+    const posts = await user.getPosts()
 
-    // Verificar que los posts existen en la base de datos
-    const posts = await Post.findAll({
-        where: {
-            id: postIds
-        }
-    });
+    //! 4 - Final retorno
+    return res.json(posts)
+});
 
-    if (posts.length !== postIds.length) {
-        return res.status(404).json({ message: 'Uno o más posts no encontrados' });
-    }
-
-    // Establecer la relación en la tabla intermedia 'favorites'
-    await users.setPosts(postIds);
-
-    const post = await users.getPosts()
-
-    console.log(postIds)
-    return res.json({ message: 'Relación hecha', posts: post })
-})
 
 module.exports = {
     getAll,

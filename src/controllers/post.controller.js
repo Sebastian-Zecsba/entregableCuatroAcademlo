@@ -1,9 +1,9 @@
 const catchError = require('../utils/catchError');
 const Post = require('../models/Post');
+const User = require('../models/User');
 
 const getAll = catchError(async(req, res) => {
-    const userId = req.user.id;
-    const results = await Post.findAll({where: {userId}});
+    const results = await Post.findAll();
     return res.json(results);
 });
 

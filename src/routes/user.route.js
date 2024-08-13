@@ -14,7 +14,7 @@ routerUser.route('/login')
 routerUser.route('/me')
     .get(verifyJwt, logged)
 
-routerUser.route('/:id/post')
+routerUser.route('/:id/posts')
     .post(verifyJwt, setPost)
 
 routerUser.route('/:id')
