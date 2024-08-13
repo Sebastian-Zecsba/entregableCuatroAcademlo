@@ -6,17 +6,7 @@ const Post = require('../models/Post');
 const Favorite = require('../models/Favorite');
 
 const getAll = catchError(async(req, res) => {
-    const users = await User.findAll({
-        include: [
-            {
-                model: Post,
-                as: 'favoritePosts', 
-                through: {
-                    attributes: []
-                }
-            }
-        ]
-    });
+    const users = await User.findAll({include: [Post, Favorite]});
     return res.json(users);
 });
 
