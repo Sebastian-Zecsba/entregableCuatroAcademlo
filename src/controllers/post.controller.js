@@ -3,7 +3,7 @@ const Post = require('../models/Post');
 const User = require('../models/User');
 
 const getAll = catchError(async(req, res) => {
-    const results = await Post.findAll();
+    const results = await Post.findAll({include: User});
     return res.json(results);
 });
 

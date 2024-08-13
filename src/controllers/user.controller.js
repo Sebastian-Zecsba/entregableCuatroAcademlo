@@ -3,10 +3,21 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const Post = require('../models/Post');
+const Favorite = require('../models/Favorite');
 
 const getAll = catchError(async(req, res) => {
-    const results = await User.findAll({include: [Post, Favorite]});
-    return res.json(results);
+    const users = await User.findAll({
+        include: [
+            {
+                model: Post,
+                as: 'favoritePosts', 
+                through: {
+                    attributes: []
+                }
+            }
+        ]
+    });
+    return res.json(users);
 });
 
 const create = catchError(async(req, res) => {

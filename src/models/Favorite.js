@@ -1,15 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utils/connection');
 const Favorite = sequelize.define('favorite', {
-    userId: {
+    user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      field: 'user_id'
+      allowNull: false
     },
-    postId: {
+    post_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      field: 'post_id'
+      allowNull: false
     },
 });
 module.exports = Favorite;
